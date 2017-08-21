@@ -1,16 +1,22 @@
 {
-    "name": "entomb/slim-json-api",
+    "name": "fccn/slim-json-api",
     "type": "library",
     "version": "1.2.3",
     "description": "Slim extension to implement fast JSON API's",
     "keywords": ["slim","json","API","view", "middleware"],
-    "homepage": "https://github.com/entomb/slim-json-api",
+    "homepage": "https://github.com/fccn/slim-json-api",
     "license": "MIT",
     "authors": [
         {
             "name": "Jonathan Tavares",
             "email": "the.entomb@gmail.com",
             "homepage": "https://github.com/entomb",
+            "role": "Developer"
+        },
+        {
+            "name": "Paulo Costa",
+            "email": "paulo.costa@fccn.pt",
+            "homepage": "https://github.com/coostax",
             "role": "Developer"
         }
     ],
