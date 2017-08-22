@@ -1,23 +1,10 @@
 <?php
-/**
- * jsonAPI - Slim extension to implement fast JSON API's
- *
- * @package Slim
- * @subpackage View
- * @author Jonathan Tavares <the.entomb@gmail.com>
- * @license GNU General Public License, version 3
- * @filesource
- *
- *
-*/
-
 
 /**
  * JsonApiView - view wrapper for json responses (with error code).
+ * Adaptation from Jonathan Tavares <the.entomb@gmail.com> entomb/slim-json-api
  *
- * @package Slim
- * @subpackage View
- * @author Jonathan Tavares <the.entomb@gmail.com>
+ * @author Paulo Costa <paulo.costa@fccn.pt>
  * @license GNU General Public License, version 3
  * @filesource
  */
@@ -46,13 +33,13 @@ class JsonApiView extends \Slim\View {
      * @var string
      */
     public $contentType = 'application/json';
-    
+
     /**
      *
      * @var string
      */
     private $dataWraper;
-    
+
     /**
      *
      * @var string
@@ -60,11 +47,17 @@ class JsonApiView extends \Slim\View {
     private $metaWrapper;
 
     /**
-     * 
+     *
      * @var bool
      */
     private $dataOnly = false;
 
+
+    /**
+     *
+     * @var bool
+     */
+    private $overrideError = true;
 
     /**
      * Construct JsonApiView instance
@@ -93,13 +86,13 @@ class JsonApiView extends \Slim\View {
             if ($status<400) {
                 if ($this->metaWrapper) {
                     $response[$this->metaWrapper]['error'] = false;
-                } else {
+                } elseif(empty($response['error']) || $this->overrideError) {
                     $response['error'] = false;
                 }
             } else {
                 if ($this->metaWrapper) {
                     $response[$this->metaWrapper]['error'] = true;
-                } else {
+                } elseif(empty($response['error']) || $this->overrideError) {
                     $response['error'] = true;
                 }
             }
@@ -128,9 +121,12 @@ class JsonApiView extends \Slim\View {
                 }
             }
         } else {
-            unset($response['flash'], $response['status'], $response['error']);
+            unset($response['flash'], $response['status']);
+            if($this->overrideError){
+              unset($response['error']);
+            }
         }
-		
+
         $app->response()->status($status);
         $app->response()->header('Content-Type', $this->contentType);
 
@@ -148,10 +144,21 @@ class JsonApiView extends \Slim\View {
     /**
      * set whether to return only the data
      *
-     * @param   bool    $dataOnly  
+     * @param   bool    $dataOnly
      */
     public function dataOnly($dataOnly = true)
     {
         $this->dataOnly = $dataOnly;
     }
+
+    /**
+     * set whether to override error field or not
+     *
+     * @param   bool    $dataOnly
+     */
+    public function overrideError($override = true)
+    {
+        $this->overrideError = $override;
+    }
+
 }

@@ -1,22 +1,10 @@
 <?php
-/**
- * jsonAPI - Slim extension to implement fast JSON API's
- *
- * @package Slim
- * @subpackage Middleware
- * @author Jonathan Tavares <the.entomb@gmail.com>
- * @license GNU General Public License, version 3
- * @filesource
- *
- *
-*/
 
 /**
  * JsonApiMiddleware - Middleware that sets a bunch of static routes for easy bootstrapping of json API's
+ * Adaptation from Jonathan Tavares <the.entomb@gmail.com> entomb/slim-json-api
  *
- * @package Slim
- * @subpackage View
- * @author Jonathan Tavares <the.entomb@gmail.com>
+ * @author Paulo Costa <paulo.costa@fccn.pt>
  * @license GNU General Public License, version 3
  * @filesource
  */
@@ -45,7 +33,7 @@ class JsonApiMiddleware extends \Slim\Middleware {
 
         // Generic error handler
         $app->error(function (Exception $e) use ($app) {
-            
+
             if ($e->getCode()) {
                 $errorCode = $e->getCode();
             } else {
