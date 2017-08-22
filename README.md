@@ -1,17 +1,40 @@
 # slim-jsonAPI
-[![Latest Stable Version](https://poser.pugx.org/entomb/slim-json-api/v/stable.png)](https://packagist.org/packages/entomb/slim-json-api)
-[![Total Downloads](https://poser.pugx.org/entomb/slim-json-api/downloads.png)](https://packagist.org/packages/entomb/slim-json-api)
 
-This is an extension to the [SLIM framework](https://github.com/codeguy/Slim) to implement json API's with great ease.
+[SLIM framework](https://github.com/codeguy/Slim) extension to implement json API's.
+
+# About
+
+This project is a fork of  [slim-jsonAPI](https://github.com/entomb/slim-json-api/).
+The major differences are as follow:
+- Ability to supress rewrite of *error* field on response
 
 ## Installation
-Using composer you can add use this as your composer.json
+Using composer you need to first add this repository to the **composer.json** file *repositories* parameter:
+
+```json
+    {
+      "repositories": [
+          {
+              "type": "vcs",
+              "url":  "https://github.com/fccn/slim-json-api.git"
+          }
+      ]
+    }
+```
+
+Then you can include this component using the following command:
+
+```sh
+   composer require fccn/slim-json-api:dev-master
+```
+
+Or you can edit the **composer.json** file directly and add the following:
 
 ```json
     {
         "require": {
             "slim/slim": "2.3.*",
-            "entomb/slim-json-api": "dev-master"
+            "fccn/slim-json-api": "dev-master"
         }
     }
 
@@ -42,7 +65,7 @@ RewriteRule ^ index.php [QSA,L]
 all your requests will be returning a JSON output.
 the usage will be `$app->render( (int)$HTTP_CODE, (array)$DATA);`
 
-#### example Code 
+#### example Code
 ```php
 
     $app->get('/', function() use ($app) {
@@ -113,6 +136,57 @@ You can optionally throw exceptions, the middleware will catch all exceptions an
 
 ```
 
+## Supressing rewrite of the error field
+
+By default all content set in the *error* field on the response is overwritten with TRUE or FALSE depending on the HTTP_CODE provided in the render method call. If you need to send additional information in the error field you can disable this override by calling the *overrideError()* method with false before calling *render()*.
+
+```php
+  $app->get('/user/:id', function($id) use ($app) {
+
+      //your code here
+      $app->view()->overrideError(false);
+      $app->render(404,array(
+              'error' => array('code' => 404, 'message' => 'not found')
+          ));
+  });
+```
+
+```json
+{
+    "error": {
+      "code": 404,
+      "message": "user not found"
+    },
+    "status":404
+}
+```
+
+The override also works on data only responses.
+
+```php
+  $app->get('/user/:id', function($id) use ($app) {
+    //set data only response (no error, status or flash fields)
+    $app->view()->dataOnly(true);
+
+    //your code here
+
+    $app->view()->overrideError(false);
+    $app->render(404,array(
+        'error' => array('code' => 404, 'message' => 'not found')
+    ));
+  });
+```
+
+```json
+{
+  "error": {
+    "code": 404,
+    "message": "user not found"
+  }
+}
+```
+
+
 ## Embedding response data and metadata in separate containers
 It is possible to separate response metadata and business information in separate containers.
 
@@ -140,7 +214,7 @@ It is possible to separate response metadata and business information in separat
 ```
 
 
-## routing specific requests to the API
+## Routing specific requests to the API
 If your site is using regular HTML responses and you just want to expose an API point on a specific route,
 you can use Slim router middlewares to define this.
 
